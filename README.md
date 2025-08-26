@@ -1,11 +1,11 @@
-# 🌐 Personal Portfolio Website
+#   Personal Portfolio Website
 
 This is my personal portfolio website built with **HTML, CSS, and JavaScript**.  
 It showcases my skills, projects, achievements, and experiences in a clean and responsive design.
 
 ---
 
-## ✨ Features
+##   Features
 - **Responsive Design**: Works seamlessly on desktop, tablet, and mobile.
 - **Hamburger Menu**: Mobile-friendly navigation with smooth toggle.
 - **Hero Section**: Intro with logo and tagline.
@@ -17,7 +17,7 @@ It showcases my skills, projects, achievements, and experiences in a clean and r
 
 ---
 
-## 🛠️ Tech Stack
+##   Tech Stack
 - **Frontend**: HTML5, CSS3, JavaScript
 - **Styling**: Custom CSS (no frameworks, handcrafted design)
  
