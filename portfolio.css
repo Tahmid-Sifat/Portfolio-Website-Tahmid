@@ -1,0 +1,757 @@
+/* Smooth scroll for navigation
+   - Makes anchor link jumps smooth instead of an instant jump */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ==== COLOR VARIABLES ==== 
+   - Using CSS variables for easy switch to Dark Mode
+   - Default values (Light theme) are defined here
+   - Dark theme will override these later in body.dark-mode
+*/
+
+:root {
+  --bg-color: #dbe6e6;
+  --text-color: #333;
+  --link-bg: #53ccdc;
+  --link-text: #000000;
+  --btn-gradient-start: #0e2259;
+  --btn-gradient-end: #4d7a92;
+  --btn-hover-start: #71999d;
+  --btn-hover-end: #c2edea;
+  --header-bg: rgb(0, 64, 91);
+  --logo-text: #00173b;
+  --nav-underline-start: #53ccdc;
+  --nav-underline-end: #060953;
+  --section-light: #ebf8f7;
+  --section-blue1: #ddf5f8;
+  --section-blue2: #eefafc;
+  --section-blue3: #b9f3fd;
+  --section-blue4: #bff9f9;
+  --section-blue5: #9dc4c4b0;
+  --section-blue6: #dbeff7be;
+  --section-blue7: #bbe6e0;
+  --section-blue8: #c6ddf8;
+  --fav-hover: #dbeff7be;
+  --hero-h1: #3d3d57;
+  --hero-span: #0a044f;
+  --skills-bg: #e1eff3;
+  --skills-shadow: rgba(83, 204, 220, 0.08);
+  --contact-label: #1d96c2;
+  --contact-border: #b6e3ef;
+  --contact-bg: #fafdff;
+  --contact-text:#333;
+  --footer-bg: #ffffff;
+  --footer-text: #555;
+  --footer-border: #ddd;
+  --href-texts : #0f0154;
+}
+
+/* ==== GLOBAL STYLES ==== */
+* {
+  margin: 0;               /* Reset default margin */
+  padding: 0;              /* Reset default padding */
+  box-sizing: border-box;  /* Ensures padding + border don’t affect final element width */
+}
+
+body {
+  font-family: Helvetica; 
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.9;        /* Improves readability */
+}
+
+
+/* ==== LINKS ==== */
+a {
+  color: var(--link-text);                  
+  background-color: var(--link-bg);        
+  padding: 6px 16px;                       
+  border-radius: 8px;                      
+  text-decoration: none;                   
+  display: inline-block;                   
+  transition: background 0.4s, color 0.2s, box-shadow 0.2s; /* Smooth hover effects */
+  box-shadow: 0 2px 8px rgba(83, 204, 220, 0.08);
+  font-weight: 500;
+}
+a:hover, a:focus {
+  background-color: #00113c;               
+  color: #fff;                             
+  box-shadow: 0 4px 16px rgba(83, 204, 220, 0.15);
+}
+
+/* ==== BUTTONS ==== */
+.btn {
+  display: inline-block;
+  background: linear-gradient(56deg, var(--btn-gradient-start) 60%, var(--btn-gradient-end) 120%);
+  color: white;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(146, 53, 27, 0.08);
+  transition: 
+    background 0.3s cubic-bezier(.4,0,.2,1), 
+    transform 0.25s cubic-bezier(.4,0,.2,1),
+    box-shadow 0.3s cubic-bezier(.4,0,.2,1);
+  margin-top: 24px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border: none;
+}
+.btn:hover, .btn:focus {
+  color: #000000;
+  background: linear-gradient(56deg, var(--btn-hover-start) 60%, var(--btn-hover-end) 120%);
+  transform: translateY(-5px) scale(1.05);  /* Subtle lift on hover */
+  box-shadow: 0 6px 24px rgba(146, 53, 27, 0.18);
+}
+
+/* ==== HEADER ==== */
+header {
+  background-color: var(--header-bg);
+  position: sticky;   /* Keeps navbar fixed on scroll */
+  top: 0;
+  width: 100%;
+  z-index: 100;       /* Ensures navbar stays on top of other elements */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
+}
+
+nav {
+  max-width: 1100px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;  /* Logo on left, nav-links on right */
+  align-items: center;
+  padding: 16px 22px;
+}
+
+ 
+.logo {
+  position: relative;
+  font-size: 1.5rem;
+  font-weight: bold;
+  font-style: italic;
+  color: var(--logo-text);
+  padding: 0.2em 1em;
+}
+.logo::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, #53ccdc 60%, #060953 120%);
+  border-radius: 12px;
+  transform: rotate(-2deg) scale(1.08);  /* Adds playful rotated background */
+  opacity: 0.7;
+  z-index: -1;
+}
+
+/* ==== NAVIGATION LINKS ==== */
+.nav-links {
+  list-style: none; 
+  display: flex;
+  gap: 20px;
+}
+.nav-links a {
+  position: relative;
+  overflow: hidden;
+  transition: color 0.2s;
+}
+.nav-links a::after {
+  content: '';               /* Decorative underline */
+  display: block;
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg, var(--nav-underline-start) 60%, var(--nav-underline-end) 100%);
+  transform: scaleX(0);
+  transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+  transform-origin: left;
+}
+.nav-links a:hover::after, .nav-links a:focus::after {
+  transform: scaleX(1);  /* Underline appears on hover */
+}
+
+/* ==== SECTION COLORS (Light Mode) ==== */
+#home { background: linear-gradient(to right, var(--section-blue1), var(--section-blue3)); }
+#about { background-color: var(--section-blue1); }
+#skills { background-color: var(--section-blue2); }
+#projects { background-color: var(--section-light); }
+#achievements { background-color: var(--section-blue1); }
+#favorites { background-color: var(--section-blue4); }
+#philosophy { background-color: var(--section-light); }
+#contact { background: linear-gradient(to right, var(--section-blue3), var(--section-blue2)); }
+
+/* ==== SECTION BASE STYLE & ENTRANCE ANIMATION ==== */
+section {
+  max-width: 1100px;
+  margin: auto;
+  padding: 80px 40px;
+  border-radius: 12px;
+  margin-bottom: 40px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  opacity: 0;                          /* Hidden initially */
+  transform: translateY(40px) scale(0.98);  /* Slight offset for animation */
+  transition: opacity 0.8s cubic-bezier(.4,0,.2,1), 
+              transform 0.8s cubic-bezier(.4,0,.2,1);
+}
+section.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);   /* Visible on scroll */
+}
+
+/* ==== HERO SECTION ==== */
+.hero-text { flex: 1; padding: 20px; }
+.hero-text h1 {
+  font-size: 2rem;
+  color: var(--hero-h1);
+  margin-bottom: 10px;
+}
+.hero-text h1 span {
+  font-size: 2.5rem;
+  color: var(--hero-span);
+}
+.hero-text p {
+  font-size: 1.6rem;
+  margin-bottom: 7px;
+}
+
+.hero-image { flex: 1.5; text-align: center; }
+.hero-image img {
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid #04c6df;
+  filter: grayscale(20%) brightness(0.98);   /* Subtle grayscale by default */
+  transition: transform 0.5s, box-shadow 0.5s, filter 0.4s;
+}
+.hero-image img:hover {
+  transform: scale(1.08) rotate(-2deg);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  filter: grayscale(0%) brightness(1.05);
+}
+
+/* about */
+#about p {
+  font-size: 1.05rem;
+}
+#about ul {
+  font-size: 1.02rem;
+  margin-left: 18px;
+  margin-top: 10px;
+  list-style: circle;
+  line-height: 1.6;
+}
+
+/* ==== SKILLS ==== */
+
+.skills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.skills-container div {
+  flex: 1;
+  min-width: 200px;
+  background: var(--skills-bg);
+  border-radius: 10px;
+  box-shadow: 0 2px 12px var(--skills-shadow);
+  padding: 18px 28px;
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+.skills-container div:hover {
+  box-shadow: 0 8px 32px rgba(83, 204, 220, 0.18);
+  transform: translateY(-6px) scale(1.03);
+}
+
+/* project individual styling  */
+
+/* ==== PROJECT LINKS ==== */
+#projects a {
+  all: unset;                  /* remove inherited button styles */
+  color:var(--logo-text);              /* deep navy for text link */
+  line-height: 40px;
+  font-size: 18px;
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+#projects a:hover {
+  color: var(--href-texts);              /* lighter blue on hover */
+  text-decoration-thickness: 2px; /* thicker underline effect */
+}
+
+/* Experience section */
+
+/* ==== EXPERIENCE TIMELINE (LADDER STYLE) ==== */
+#experience {
+  background: linear-gradient(to right, var(--section-blue7), var(--section-blue8));
+}
+
+.timeline {
+  position: relative;
+  margin: 40px 0;
+  padding-left: 40px; /* more space for ladder line */
+  border-left: 4px solid var(--hero-span); /* main vertical line */
+}
+
+.timeline-item {
+  margin-bottom: 50px;
+  position: relative;
+}
+
+/* Horizontal connector (ladder step) */
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -44px;     /* aligns with vertical line */
+  top: 35px;
+  width: 40px;     /* step length */
+  height: 2.4px;
+  background: var(--hero-span);
+}
+
+.timeline-content {
+  background: var(--section-light);
+  padding: 18px 22px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.timeline-content:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.timeline-content h3 {
+  margin-bottom: 6px;
+  color: var(--hero-span);
+}
+
+.exp-duration {
+  font-size: 1.1rem;
+  font-style: italic;
+  color: var(--contact-text);
+  margin-bottom: 10px;
+}
+
+.timeline-content ul {
+  margin-left: 18px;
+  list-style: disc;
+  color: var(--contact-text);
+  line-height: 1.6;
+}
+
+/* experience section ends */
+
+
+/* Favorites & Hobbies Section */
+
+#favorites ul {
+  padding: 0;
+  margin: 0;
+}
+
+#favorites ul li {
+  margin: 6px 0;                           /* spacing between items */
+  padding: 12px 16px;                      /* inner spacing */
+  font-size: 18px;                         /* readable font size */
+  line-height: 1.2;                        /* better line spacing */
+}
+
+#favorites ul li:hover {
+  background: var(--fav-hover); 
+  border-radius: 10px;                    /* light background on hover */
+  transform: translateX(5px);              /* slight slide to the right */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);   /* soft shadow */
+}
+
+/* hobbies section ends */
+
+/* ==== CONTACT FORM ==== */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+label {
+  font-weight: 500;
+  color: var(--contact-label);
+}
+input, textarea {
+  padding: 12px 14px;
+  border: 1.5px solid var(--contact-border);
+  border-radius: 7px;
+  background: var(--contact-bg);
+  box-shadow: 0 1px 4px rgba(83, 204, 220, 0.06);
+  transition: border 0.2s, box-shadow 0.2s;
+}
+input:focus, textarea:focus {
+  border-color: var(--contact-label);
+  box-shadow: 0 2px 12px rgba(29, 150, 194, 0.13);
+  outline: none;
+}
+button {
+  background-color: var(--link-bg);
+  color: white;
+  cursor: pointer;
+  border: none;
+  padding: 12px 0;
+  border-radius: 7px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+button:hover {
+  background-color: #011012;
+}
+
+#contact p { margin-bottom: 22px; }
+
+#contactBtn { padding: 15px 19px;  
+   margin-top: 10px; 
+   /* more space above the button */
+    margin-left: 19px; 
+    margin-bottom: 30px; }
+
+    /* contact part polished UI  *//* === CONTACT SECTION FIX === */
+
+/* Contact section should follow the same sizing as other sections */
+#contact {
+  background: linear-gradient(to right, var(--section-blue4), var(--section-blue5)); /* matches theme */
+  margin-bottom: 60px;  /* extra spacing before footer */
+}
+
+/* Contact info plain, professional */
+.contact-info {
+  margin-bottom: 1.5rem;
+  font-size: 1.15rem;
+  line-height: 1;
+  color:var(--contact-text);
+}
+
+.contact-info p {
+  
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color:var(--contact-text);
+}
+
+.contact-info a {
+  color: var(--href-texts);
+  text-decoration: none;
+  background: none;       /* remove button-like box */
+  padding: 0;
+  box-shadow: none;
+}
+
+.contact-info a:hover {
+  text-decoration: underline;
+}
+
+/* Divider line */
+.contact-divider {
+  border: none;
+  border-top: 1.5px solid #ccc;
+  margin: 2rem 0;
+}
+
+/* Form intro */
+.form-intro {
+  font-style: italic;
+  margin-bottom: 1rem;
+  color: color:var(--contact-text);
+  text-align: center;
+}
+
+/* polish UI done  */
+
+/* ==== SECTION HEADINGS ==== */
+section h2 {
+  font-size: 2.1rem;
+  color: var(--hero-span);
+  margin-bottom: 18px;
+  letter-spacing: 1px;
+  display: inline-block;
+  animation: fadeInDown 0.8s;
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==== FOOTER ==== */
+footer {
+  background-color: var(--footer-bg);
+  text-align: center;
+  padding: 20px;
+  font-size: 0.9rem;
+  color: var(--footer-text);
+  border-top: 1px solid var(--footer-border);
+}
+
+ 
+/* Active nav link */
+.nav-links a.active {
+  background-color: #00113c;
+  color: #fff;
+  border-radius: 6px;
+}
+
+/* ==== BACK TO TOP BUTTON ==== */
+#backToTop {
+  position: fixed;
+  bottom: 25px;
+  right: 30px;
+  padding: 10px 17px;
+  font-size: 1.45rem;
+  border: none;
+  border-radius: 50%;
+  background-color: #47a4b09e;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: opacity 0.3s, transform 0.3s;
+  opacity: 0;             /* Hidden by default */
+  pointer-events: none;   /* Unclickable when hidden */
+}
+#backToTop.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+#backToTop:hover {
+  background-color: #00113c;
+  transform: translateY(-4px);
+}
+
+/* ==== DARK MODE SWITCH ==== */
+
+#darkModeBtn {
+  position: fixed;
+  bottom: 25px;
+  left: 30px;
+  z-index: 200;
+}
+#darkToggle { display: none; }  /* Hides actual checkbox */
+
+.toggle {
+  width: 60px;
+  height: 32px;
+  background-color: #1b1d1d;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  padding: 3px;
+  cursor: pointer;
+  transition: background 0.3s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.toggle-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #69e0ef;  /* Blue for moon */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateX(0);
+  transition: transform 0.3s, background 0.3s;
+}
+.toggle-icon img { width: 16px; height: 16px; display: block; }
+#darkToggle:checked + .toggle {
+  background-color: #15225a;
+}
+#darkToggle:checked + .toggle .toggle-icon {
+  transform: translateX(30px);
+  background: #fdd835; /* Yellow for sun */
+}
+
+/* ==== FORM VALIDATION MESSAGES ==== */
+#formMessage { margin-top: 10px; font-size: 0.9rem; font-weight: 500; }
+#formMessage.error { color: red; }
+#formMessage.success { color: green; }
+
+/* ==== TYPING EFFECT CURSOR ==== */
+#tagline {
+  font-size: 1.5rem;          
+  color: var(--hero-h1);
+  margin-top: 10px;
+  white-space: pre-wrap;
+}
+#typedText::after {
+  content: " |";  
+  display: inline-block;    
+  margin-left: 2px;         
+  animation: blinkCursor 0.8s steps(2, start) infinite;
+  color: var(--hero-span);
+  font-weight: bold;
+}
+@keyframes blinkCursor { to { opacity: 0; } }
+
+/* ==== DARK MODE VARIABLES ==== 
+   - These override :root when dark mode is ON
+*/
+body.dark-mode {
+  --bg-color: #121212;
+  --text-color: #f5f5f5;
+  --link-bg: #333;
+  --link-text: #fff;
+  --btn-gradient-start: #171719;
+  --btn-gradient-end: #303035;
+  --btn-hover-start: #666;
+  --btn-hover-end: #888;
+  --header-bg: #1e1e1e;
+  --logo-text: #e0e0e0;
+  --nav-underline-start: #bbb;
+  --nav-underline-end: #888;
+  --section-light: #1e1e1e;
+  --section-blue1: #222;
+  --section-blue2: #2a2a2a;
+  --section-blue3: #211f30;
+  --section-blue4: #1e2323;
+  --section-blue4: #202122;
+  --section-blue5: #2b2b2b;
+  --section-blue7: #232729;
+  --section-blue8: #191923;
+  --fav-hover: #0203298c;
+  --hero-h1: #f5f5f5;
+  --hero-span: #ffd54f;
+  --skills-bg: #2a2a2a;
+  --skills-shadow: rgba(255,255,255,0.05);
+  --contact-label: #bbb;
+  --contact-border: #444;
+  --contact-bg: #222225;
+  --contact-text: #cdcfd3;
+  --footer-bg: #1e1e1e;
+  --footer-text: #bbb;
+  --footer-border: #444;
+  --href-texts : #31cfcf;
+}
+
+/* ==== RESPONSIVE DESIGN (TABLET & MOBILE with Hamburger Menu) ==== */
+
+/* Tablet screens (≤ 992px): reduce paddings & font sizes */
+@media (max-width: 992px) {
+  section {
+    padding: 60px 20px;
+  }
+  .hero-text h1 {
+    font-size: 1.8rem;
+  }
+  .hero-text h1 span {
+    font-size: 2.2rem;
+  }
+  .hero-text p {
+    font-size: 1.3rem;
+  }
+}
+
+/* Small laptops / large tablets (≤ 820px): keep nav horizontal but tighter */
+@media (max-width: 820px) {
+  nav {
+    gap: 14px;
+    flex-wrap: wrap;  /* allows wrapping without stacking */
+  }
+}
+
+/* Big Mobile / tablet screens (≤ 768px): stack content & enable hamburger */
+@media (max-width: 768px) {
+  /* Hamburger toggle */
+  #menuToggle {
+    display: block;
+  }
+
+  .nav-links {
+    display: none;           /* hidden by default */
+    flex-direction: column;
+    background: var(--header-bg);
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    width: 200px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    z-index: 100;
+  }
+
+  .nav-links.show {
+    display: flex;
+  }
+
+  .nav-links a {
+    font-size: 0.9rem;
+    padding: 10px 14px;
+    border-radius: 6px;
+    text-align: center;
+  }
+
+  /* Hero section stack */
+  .hero-text,
+  .hero-image {
+    flex: 1 1 100%;
+    text-align: center;
+  }
+  .hero-image img {
+    width: 160px;
+    height: 160px;
+  }
+
+  /* Skills section stack */
+  .skills-container div {
+    min-width: auto;
+    width: 100%;
+  }
+
+  /* Timeline adjustments */
+  .timeline {
+    border-left: none;
+    padding-left: 0;
+  }
+  .timeline-content {
+    margin-top: 15px;
+  }
+
+  /* Contact form adjustments */
+  form {
+    width: 100%;
+    padding: 0 10px;
+  }
+
+  /* Footer adjustments */
+  footer {
+    font-size: 0.8rem;
+  }
+}
+
+
+
+/* Hamburger button styling */
+#menuToggle {
+  display: none;           /* hide by default (desktop) */
+  position: absolute;      /* float over nav */
+  top: 50%;                /* vertical center */
+  right: 20px;
+  transform: translateY(-50%);
+  font-size: 1.8rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 200;            /* above nav links */
+  color: var(--logo-text);
+}
+
+/* smaller mobile adjustment (≤ 600px) */
+@media (max-width: 600px) {
+  #menuToggle {
+    display: block;        /* show hamburger */
+  }
+  .nav-links {
+    width: 180px;          /* slightly narrower on very small screens */
+  }
+}
